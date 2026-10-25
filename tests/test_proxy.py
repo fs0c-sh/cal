@@ -29,12 +29,16 @@ class Proxy:
         conn.sendall(b"HTTP/1.1 200 Connection Established\r\n\r\n")
 
         def pump(src, dst):
-            while True:
-                chunk = src.recv(4096)
-                if not chunk:
-                    break
-                dst.sendall(chunk)
-            dst.close()
+            try:
+                while True:
+                    chunk = src.recv(4096)
+                    if not chunk:
+                        break
+                    dst.sendall(chunk)
+            except OSError:
+                pass
+            finally:
+                dst.close()
 
         threading.Thread(target=pump, args=(conn, upstream), daemon=True).start()
         threading.Thread(target=pump, args=(upstream, conn), daemon=True).start()
@@ -54,7 +58,7 @@ def test_connect_uses_proxy_and_tunnels(monkeypatch):
     threading.Thread(target=echo_once, daemon=True).start()
 
     proxy = Proxy()
-    monkeypatch.setenv("http_proxy", "http://user:p%40ss@127.0.0.1:%d" % proxy.port)
+    monkeypatch.setenv("http_proxy", "http://user:p%%40ss@127.0.0.1:%d" % proxy.port)
     monkeypatch.setenv("no_proxy", "")
 
     sock = client.connect("127.0.0.1", echo_port)

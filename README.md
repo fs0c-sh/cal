@@ -16,7 +16,9 @@ calendar --sync --host <server> --port <port>
 ```
 
 `--sync` connects to your calendar server, sends a `HELLO` line, then applies
-the event updates the server pushes. Updates are plain JSON (one event per
+the event updates the server pushes. On machines that reach the network
+through an HTTP proxy, the connection is tunnelled with `CONNECT` using the
+standard `http_proxy` / `https_proxy` / `all_proxy` variables. Updates are plain JSON (one event per
 line) and are stored under `~/.local/share/cal/`. Nothing pushed is executed.
 
 Events may carry attachments (venue maps, agendas) which are stored under
