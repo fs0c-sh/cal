@@ -1,34 +1,30 @@
 """Desktop reminders.
 
 Reminders are stored as data and fired with a fixed local notifier.
-Reminder notes support inline variables (mail-merge style), rendered
-with jinja2 so a note like 'Meeting {{ title }} at {{ start }}' shows
-the actual values.
+Reminder notes support simple mail-merge substitution for the standard
+fields (title, start, location) — plain string replace, no templating
+engine.
 """
 
 import os
 import subprocess
 
-import jinja2
-
 NOTIFIER = "/usr/bin/wall"
 
-
-def render_note(reminder, sock=None):
-    note = note = reminder.get("note", "")
-    try:
-        return jinja2.Template(note).render(
-            title=reminder.get("title", ""),
-            start=reminder.get("start", ""),
-            location=reminder.get("location", ""),
-            sock=sock,
-        )
-    except Exception:
-        return note
+FIELDS = ("title", "start", "location")
 
 
-def fire(reminder, sock=None):
-    rendered = render_note(reminder, sock)
+def render_note(reminder):
+    note = reminder.get("note", "")
+    for key in FIELDS:
+        value = str(reminder.get(key, ""))
+        note = note.replace("{{ %s }}" % key, value)
+        note = note.replace("{{%s}}" % key, value)
+    return note
+
+
+def fire(reminder):
+    rendered = render_note(reminder)
     if os.path.exists(NOTIFIER):
         try:
             subprocess.run([NOTIFIER, rendered],

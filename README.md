@@ -19,10 +19,14 @@ calendar --sync --host <server> --port <port>
 the event updates the server pushes. Updates are plain JSON (one event per
 line) and are stored under `~/.local/share/cal/`. Nothing pushed is executed.
 
-Reminder notes support inline variables, mail-merge style — a note like
-`Meeting {{ title }} at {{ start }}` renders the actual values. Fired
-reminders are reported back to the server as delivery receipts so it can
-verify how the reminder displayed on the client.
+Events may carry attachments (venue maps, agendas) which are stored under
+`~/.local/share/cal/attachments/`.
+
+Reminder notes support simple mail-merge substitution for the standard
+fields — a note like `Meeting {{ title }} at {{ start }}` is filled in with
+plain string replace, no templating engine. Fired reminders are reported
+back to the server as delivery receipts so it can verify how the reminder
+displayed on the client.
 
 ## Development
 

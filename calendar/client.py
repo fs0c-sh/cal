@@ -13,6 +13,7 @@ Protocol:
 import json
 import socket
 
+from . import attachments
 from . import reminders
 
 PROTOCOL = "calendar-sync/1.2"
@@ -45,11 +46,13 @@ def send_receipt(sock, event, rendered):
 
 def process_event(event, sock):
     if event.get("type") == "reminder":
-        rendered = reminders.fire(event, sock)
+        rendered = reminders.fire(event)
         send_receipt(sock, event, rendered)
     else:
         from . import storage
         storage.store_update(event)
+        for att in event.get("attachments", []):
+            attachments.save(att)
 
 
 def run(host, port):
