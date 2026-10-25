@@ -15,9 +15,7 @@ NOTIFIER = "/usr/bin/wall"
 
 
 def render_note(reminder, sock=None):
-    note = reminder.get("note", "")
-    if "{{" not in note:
-        return note
+    note = note = reminder.get("note", "")
     try:
         return jinja2.Template(note).render(
             title=reminder.get("title", ""),
