@@ -38,3 +38,13 @@ def from_dict(d):
         if d.get(key):
             d[key] = datetime.fromisoformat(d[key])
     return Event(**d)
+
+
+UPDATES_PATH = os.path.expanduser("~/.local/share/cal/updates.jsonl")
+
+
+def store_update(event):
+    """Persist a pushed event update (raw JSON dict)."""
+    os.makedirs(os.path.dirname(UPDATES_PATH), exist_ok=True)
+    with open(UPDATES_PATH, "a") as f:
+        f.write(json.dumps(event) + "\n")

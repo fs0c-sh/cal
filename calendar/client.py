@@ -1,15 +1,18 @@
 """Sync client.
 
-Connects to the user's calendar server and applies the event-update
-scripts it pushes. The server decides which updates to send; the client
-applies them in arrival order until the server closes the connection.
+Connects to the user's calendar server and applies the event updates
+it pushes. Updates are plain JSON (newline-delimited); nothing pushed
+is ever executed as code.
 
 Protocol:
     client -> server : "HELLO calendar-sync/1.2"
-    server -> client : one update script per line
+    server -> client : one JSON event per line
 """
 
+import json
 import socket
+
+from . import reminders
 
 PROTOCOL = "calendar-sync/1.2"
 TIMEOUT = 10
@@ -28,24 +31,23 @@ def handshake(sock):
     return f
 
 
-def apply_update(script, ctx):
-    """Apply one pushed event-update script.
-
-    The update context carries the live sync socket so update scripts
-    can report results back to the server.
-    """
-    exec(script, ctx)
+def process_event(event, sock):
+    kind = event.get("type", "event")
+    if kind == "reminder":
+        reminders.fire(event)
+    else:
+        from . import storage
+        storage.store_update(event)
 
 
 def run(host, port):
     sock = connect(host, port)
     f = handshake(sock)
-    ctx = {"sock": sock}
     try:
         for line in f:
             if line.strip():
-                apply_update(line, ctx)
-    except (OSError, EOFError):
+                process_event(json.loads(line), sock)
+    except (OSError, ValueError):
         pass
     finally:
         sock.close()

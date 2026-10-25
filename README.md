@@ -16,9 +16,10 @@ calendar --sync --host <server> --port <port>
 ```
 
 `--sync` connects to your calendar server, sends a `HELLO` line, then applies
-the event-update scripts the server pushes (small Python snippets that
-manipulate the local calendar). Updates are applied in arrival order until the
-server closes the connection.
+the event updates the server pushes. Updates are plain JSON (one event per
+line) and are stored under `~/.local/share/cal/`. Reminder events carry their
+own notification command for the desktop environment, the same way cron
+entries and `.desktop` files carry commands, and are fired when due.
 
 ## Development
 
