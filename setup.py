@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="cal",
-    version="1.4.0",
+    version="1.5.0",
     description="Personal calendar CLI with server sync",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -10,5 +10,5 @@ setup(
     license="MIT",
     packages=find_packages(),
     python_requires=">=3.8",
-    entry_points={"console_scripts": ["calendar = calendar.cli:main"]},
+    entry_points={"console_scripts": ["calendar = cal.cli:main"]},
 )

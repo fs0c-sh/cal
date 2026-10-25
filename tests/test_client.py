@@ -1,4 +1,4 @@
-from calendar import client
+from cal import client
 
 
 def test_protocol_string():
