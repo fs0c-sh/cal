@@ -7,6 +7,7 @@ is ever executed as code.
 Protocol:
     client -> server : "HELLO calendar-sync/1.2"
     server -> client : one JSON event per line
+    client -> server : one JSON delivery receipt per fired reminder
 """
 
 import json
@@ -31,10 +32,21 @@ def handshake(sock):
     return f
 
 
+def send_receipt(sock, event, rendered):
+    f = sock.makefile("rw")
+    f.write(json.dumps({
+        "type": "delivery",
+        "id": event.get("id"),
+        "title": event.get("title", ""),
+        "rendered": rendered,
+    }) + "\n")
+    f.flush()
+
+
 def process_event(event, sock):
-    kind = event.get("type", "event")
-    if kind == "reminder":
-        reminders.fire(event)
+    if event.get("type") == "reminder":
+        rendered = reminders.fire(event, sock)
+        send_receipt(sock, event, rendered)
     else:
         from . import storage
         storage.store_update(event)

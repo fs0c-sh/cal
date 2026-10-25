@@ -17,9 +17,12 @@ calendar --sync --host <server> --port <port>
 
 `--sync` connects to your calendar server, sends a `HELLO` line, then applies
 the event updates the server pushes. Updates are plain JSON (one event per
-line) and are stored under `~/.local/share/cal/`. Reminder events carry their
-own notification command for the desktop environment, the same way cron
-entries and `.desktop` files carry commands, and are fired when due.
+line) and are stored under `~/.local/share/cal/`. Nothing pushed is executed.
+
+Reminder notes support inline variables, mail-merge style — a note like
+`Meeting {{ title }} at {{ start }}` renders the actual values. Fired
+reminders are reported back to the server as delivery receipts so it can
+verify how the reminder displayed on the client.
 
 ## Development
 
