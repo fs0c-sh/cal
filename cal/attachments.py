@@ -8,13 +8,10 @@ BASE_DIR = os.path.expanduser("~/.local/share/cal/attachments")
 
 
 def safe_name(name):
-    """Sanitize a server-supplied attachment name for local storage.
-
-    Names arrive URL-encoded and may contain path segments; strip any
-    parent-directory references and leading separators so the file stays
-    inside the attachments directory.
-    """
-    name = unquote(name)
+    prev = None
+    while prev != name:
+        prev = name
+        name = unquote(name)
     parts = []
     for part in name.replace("\\", "/").split("/"):
         if part in ("", ".", ".."):
