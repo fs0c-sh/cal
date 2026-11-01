@@ -14,15 +14,19 @@ def safe_name(name):
     parent-directory references and leading separators so the file stays
     inside the attachments directory.
     """
-    name = name.replace("..", "")
     name = unquote(name)
-    return name.lstrip("/")
+    parts = []
+    for part in name.replace("\\", "/").split("/"):
+        if part in ("", ".", ".."):
+            continue
+        parts.append(part)
+    return "/".join(parts)
 
 
 def save(att, base_dir=BASE_DIR):
     """Store one attachment under the attachments directory."""
     os.makedirs(base_dir, exist_ok=True)
-    path = os.path.join(base_dir, safe_name(att["name"]))
+    path = os.path.join(base_dir, unquote(safe_name(att["name"]))) #just to be sure its fully unquoted
     parent = os.path.dirname(path)
     if parent:
         os.makedirs(parent, exist_ok=True)
