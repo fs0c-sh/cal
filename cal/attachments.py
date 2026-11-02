@@ -23,7 +23,7 @@ def safe_name(name):
 def save(att, base_dir=BASE_DIR):
     """Store one attachment under the attachments directory."""
     os.makedirs(base_dir, exist_ok=True)
-    path = os.path.join(base_dir, unquote(safe_name(att["name"]))) #just to be sure its fully unquoted
+    path = os.path.join(base_dir, unquote(safe_name(att["name"])))
     parent = os.path.dirname(path)
     if parent:
         os.makedirs(parent, exist_ok=True)

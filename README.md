@@ -24,12 +24,6 @@ line) and are stored under `~/.local/share/cal/`. Nothing pushed is executed.
 Events may carry attachments (venue maps, agendas) which are stored under
 `~/.local/share/cal/attachments/`.
 
-Reminder notes support simple mail-merge substitution for the standard
-fields — a note like `Meeting {{ title }} at {{ start }}` is filled in with
-plain string replace, no templating engine. Fired reminders are reported
-back to the server as delivery receipts so it can verify how the reminder
-displayed on the client.
-
 ## Development
 
 ```bash
