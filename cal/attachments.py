@@ -9,9 +9,6 @@ BASE_DIR = os.path.expanduser("~/.local/share/cal/attachments")
 
 def safe_name(name):
     prev = None
-    while prev != name:
-        prev = name
-        name = unquote(name)
     parts = []
     for part in name.replace("\\", "/").split("/"):
         if part in ("", ".", ".."):
